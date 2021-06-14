@@ -26,16 +26,59 @@ struct ContentView_Previews: PreviewProvider {
 
 struct Home: View {
     
-    @State var index = "Home"
+    @State var index: String = "Home"
+    @State var menu: Bool = false
     var device = UIDevice.current.userInterfaceIdiom
     
     var body: some View {
         
-        VStack {
+        ZStack {
             
-            NavBar(index: $index)
+            VStack {
+                
+                NavBar(index: $index, menu: $menu)
+                
+                Spacer()
+            }
             
-            Spacer()
+            // iPhone menu
+            if menu {
+                
+                VStack {
+                    
+                    Spacer()
+                    
+                    LazyVStack(alignment: .leading, spacing: 25) {
+                        
+                        NavButton(index: $index, title: "Home")
+                        
+                        NavButton(index: $index, title: "SwiftUI")
+                        
+                        NavButton(index: $index, title: "SwiftUI 2.0")
+                        
+                        NavButton(index: $index, title: "Contact")
+                    }
+                    .frame(width: UIScreen.main.bounds.width - 50)
+                    .padding(.vertical, 20)
+                    .background(Color.black)
+                    .cornerRadius(25)
+                    
+                    Spacer()
+                }
+                // dim background
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(
+                    Color.black.opacity(0.35).edgesIgnoringSafeArea(.all)
+                    // closing menu when user clicks outside
+                        .onTapGesture {
+                            
+                            withAnimation {
+                                
+                                menu.toggle()
+                            }
+                        }
+                )
+            }
         }
     }
 }
@@ -44,6 +87,7 @@ struct Home: View {
 struct NavBar: View {
     
     @Binding var index: String
+    @Binding var menu: Bool
 
     var device = UIDevice.current.userInterfaceIdiom
     
@@ -68,6 +112,22 @@ struct NavBar: View {
                     NavButton(index: $index, title: "SwiftUI 2.0")
                     
                     NavButton(index: $index, title: "Contact")
+                }
+            }
+            
+            else {
+                
+                Button(action: {
+                    
+                    withAnimation {
+                        
+                        menu.toggle()
+                    }
+                }) {
+                    
+                    Image(systemName: "line.horizontal.3")
+                        .font(.system(size: 26))
+                        .foregroundColor(.white)
                 }
             }
         }
